@@ -1,322 +1,188 @@
 
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#101b40">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Thermometer Lab V2</title>
-
 <style>
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;color:white;
+ font-family:Arial,sans-serif;text-align:center;
+ background:radial-gradient(circle at top,#285c9b,#111735 65%,#080e25);
 }
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: Arial, sans-serif;
-  color: white;
-  background:
-    radial-gradient(ellipse at 50% 35%, #244b85 0%, transparent 55%),
-    linear-gradient(145deg, #101735, #171044 60%, #071b37);
-  overflow-x: hidden;
+.container{max-width:850px;margin:auto;padding:25px 18px}
+.logo{font-size:clamp(32px,7vw,60px);font-weight:900;text-shadow:0 0 25px #39dfff}
+.logo span{color:#51e8ff}
+.subtitle{color:#b9d8ff;letter-spacing:2px;margin:12px}
+.panel{
+ background:#142448dd;border:1px solid #55caff88;
+ border-radius:22px;padding:22px;margin:22px auto;
+ max-width:700px;
 }
-
-.stars {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(white 1px, transparent 1px);
-  background-size: 45px 45px;
-  opacity: .2;
+input{
+ width:100%;padding:15px;margin:12px 0;
+ border-radius:12px;border:1px solid #56d8ff;
+ background:#0a1534;color:white;font-size:17px;
+ text-align:center;
 }
-
-.container {
-  position: relative;
-  z-index: 1;
-  max-width: 900px;
-  margin: auto;
-  padding: 25px 20px 50px;
-  text-align: center;
+button{
+ width:100%;padding:15px;margin-top:12px;
+ border:0;border-radius:13px;font-size:16px;
+ font-weight:bold;cursor:pointer;
+ background:linear-gradient(100deg,#45eaff,#899aff);
+ color:#101735;
 }
-
-.logo {
-  font-size: clamp(35px, 7vw, 65px);
-  font-weight: 900;
-  line-height: 1.1;
-  margin-top: 25px;
-  text-shadow: 0 0 25px #39dfff;
+.secondary{background:linear-gradient(100deg,#ffdf8b,#ff9ec9)}
+.screen{display:none}
+.screen.active{display:block}
+.characters{
+ display:grid;grid-template-columns:repeat(2,1fr);
+ gap:12px;margin-top:20px;
 }
-
-.logo span {
-  color: #51e8ff;
+.character{
+ background:#1e3865;border:2px solid transparent;
+ border-radius:18px;padding:16px 8px;cursor:pointer;
 }
-
-.subtitle {
-  color: #c4d9ff;
-  letter-spacing: 3px;
-  margin-top: 12px;
+.character.selected{
+ border-color:#45eaff;background:#28558a;
+ box-shadow:0 0 20px #45eaff66;
 }
-
-.lab {
-  height: 220px;
-  max-width: 500px;
-  margin: 25px auto;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  perspective: 600px;
+.avatar{font-size:60px}
+.character p{font-weight:bold}
+.small{font-size:12px;color:#b9d8ff}
+.badge{
+ display:inline-block;padding:9px 13px;
+ background:#234a72;border-radius:25px;margin:5px;
 }
-
-.platform {
-  position: absolute;
-  width: 260px;
-  height: 90px;
-  background: linear-gradient(135deg,#32cfff,#6546ff);
-  border-radius: 50%;
-  transform: rotateX(65deg);
-  box-shadow: 0 0 45px #25dfff;
-  bottom: 18px;
+@media(min-width:650px){
+ .characters{grid-template-columns:repeat(4,1fr)}
 }
-
-.thermometer {
-  position: relative;
-  width: 35px;
-  height: 155px;
-  border: 5px solid #e9f8ff;
-  border-radius: 25px;
-  background: #d8f6ff;
-  box-shadow: 0 0 30px #51e8ff;
-  z-index: 2;
-  transform: rotate(-12deg);
-}
-
-.thermometer:before {
-  content: "";
-  position: absolute;
-  width: 23px;
-  height: 23px;
-  background: #ff587b;
-  border-radius: 50%;
-  bottom: -13px;
-  left: 1px;
-}
-
-.thermometer:after {
-  content: "";
-  position: absolute;
-  width: 7px;
-  height: 90px;
-  background: linear-gradient(to top,#ff587b,#ff9d69);
-  border-radius: 10px;
-  bottom: 9px;
-  left: 9px;
-  animation: heat 2s infinite alternate;
-}
-
-@keyframes heat {
-  from { height: 65px; }
-  to { height: 110px; }
-}
-
-.beaker {
-  position: absolute;
-  width: 65px;
-  height: 85px;
-  border: 4px solid #a5eaff;
-  border-top: 0;
-  border-radius: 5px 5px 20px 20px;
-  right: 15%;
-  bottom: 40px;
-  transform: rotate(8deg);
-  background: linear-gradient(to top, #26d9ff88 55%, transparent 55%);
-  box-shadow: 0 0 20px #32dfff;
-}
-
-.beaker:before {
-  content: "";
-  position: absolute;
-  width: 55px;
-  border-top: 4px solid #a5eaff;
-  top: 0;
-  left: 0;
-}
-
-.orb {
-  position: absolute;
-  left: 17%;
-  top: 35px;
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 25%, white, #54dfff 30%, #4d47d9 75%);
-  box-shadow: 0 0 35px #49dfff;
-}
-
-.panel {
-  max-width: 460px;
-  margin: auto;
-  padding: 25px;
-  border: 1px solid #7acbff66;
-  border-radius: 25px;
-  background: #111c42bb;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 10px 45px #0005;
-}
-
-input {
-  width: 100%;
-  padding: 16px;
-  margin: 12px 0;
-  border-radius: 12px;
-  border: 1px solid #77cfff;
-  background: #0a1534;
-  color: white;
-  font-size: 17px;
-  text-align: center;
-}
-
-button {
-  width: 100%;
-  padding: 16px;
-  margin-top: 12px;
-  border: 0;
-  border-radius: 14px;
-  color: #071631;
-  font-size: 17px;
-  font-weight: bold;
-  cursor: pointer;
-  background: linear-gradient(100deg,#45eaff,#8c9aff);
-  box-shadow: 0 5px 22px #42dfff55;
-}
-
-button.secondary {
-  background: linear-gradient(100deg,#ffdc82,#ff9cbe);
-}
-
-button:active {
-  transform: scale(.97);
-}
-
-.info {
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  flex-wrap: wrap;
-  margin-top: 25px;
-  color: #b9d5ff;
-  font-size: 13px;
-}
-
-.footer {
-  margin-top: 30px;
-  color: #819bc5;
-  font-size: 12px;
-}
-
 </style>
 </head>
-
 <body>
-<div class="stars"></div>
-
 <main class="container">
 
-  <div class="subtitle">WELCOME TO SCIENCE WORLD</div>
+<div class="subtitle">WELCOME TO SCIENCE WORLD</div>
+<div class="logo">THERMO<span>METER</span> LAB V2</div>
+<div class="subtitle">THE ULTIMATE TEMPERATURE CHALLENGE</div>
 
-  <div class="logo">
-    THERMO<span>METER</span><br>
-    LAB V2
+<!-- HOME -->
+<section id="home" class="screen active">
+ <div style="font-size:110px;margin:30px">🧪🌡️</div>
+ <div class="panel">
+  <h2>SCIENCE MISSION</h2>
+  <p>ยินดีต้อนรับสู่อาณาจักรวิทยาศาสตร์</p>
+  <button onclick="showScreen('select')">
+   🚀 START GAME
+  </button>
+ </div>
+</section>
+
+<!-- CHARACTER SELECTION -->
+<section id="select" class="screen">
+ <div class="panel">
+  <h2>🧑‍🔬 CHOOSE YOUR SCIENTIST</h2>
+  <p>เลือกนักวิทยาศาสตร์ของคุณ</p>
+
+  <input id="playerName" maxlength="20"
+   placeholder="ใส่ชื่อผู้เล่น">
+
+  <div class="characters">
+   <div class="character selected" onclick="choose(0)">
+    <div class="avatar">👩🏻‍🔬</div>
+    <p>Scientist Mia</p>
+    <div class="small">นักทดลองมือใหม่</div>
+   </div>
+
+   <div class="character" onclick="choose(1)">
+    <div class="avatar">👨🏽‍🔬</div>
+    <p>Scientist Max</p>
+    <div class="small">นักค้นคว้า</div>
+   </div>
+
+   <div class="character" onclick="choose(2)">
+    <div class="avatar">🧑🏼‍🔬</div>
+    <p>Scientist Leo</p>
+    <div class="small">นักวิทยาศาสตร์สายลุย</div>
+   </div>
+
+   <div class="character" onclick="choose(3)">
+    <div class="avatar">👩🏽‍🚀</div>
+    <p>Scientist Luna</p>
+    <div class="small">นักสำรวจอวกาศ</div>
+   </div>
   </div>
 
-  <div class="subtitle">
-    THE ULTIMATE TEMPERATURE CHALLENGE
-  </div>
+  <button onclick="confirmCharacter()">
+   CONFIRM CHARACTER
+  </button>
+  <button class="secondary" onclick="showScreen('home')">
+   BACK
+  </button>
+ </div>
+</section>
 
-  <div class="lab">
-    <div class="orb"></div>
-    <div class="platform"></div>
-    <div class="thermometer"></div>
-    <div class="beaker"></div>
-  </div>
+<!-- LOBBY -->
+<section id="lobby" class="screen">
+ <div class="panel">
+  <h2>🏆 SCIENCE LOBBY</h2>
+  <div id="chosenAvatar" style="font-size:100px">👩🏻‍🔬</div>
+  <h2 id="welcomeName">Scientist</h2>
+  <p>นักวิทยาศาสตร์พร้อมปฏิบัติภารกิจ!</p>
 
-  <section class="panel">
+  <div class="badge">🌡️ TEMPERATURE LAB</div>
+  <div class="badge">🔬 SCIENCE WORLD</div>
 
-    <h2>🧪 SCIENCE MISSION</h2>
-    <p>พร้อมหรือยัง นักวิทยาศาสตร์ตัวจิ๋ว?</p>
+  <h3>ภารกิจของคุณ</h3>
+  <p>เตรียมตัวเข้าสู่ห้องทดลองอุณหภูมิ</p>
 
-    <input
-      id="playerName"
-      type="text"
-      maxlength="20"
-      placeholder="ใส่ชื่อผู้เล่นของคุณ"
-    >
+  <button onclick="alert('รอระบบแข่งขันออนไลน์ในขั้นตอนถัดไป')">
+   🚀 READY TO PLAY
+  </button>
 
-    <button onclick="createRoom()">
-      🚀 สร้างห้องแข่งขัน (สำหรับครู)
-    </button>
+  <button class="secondary" onclick="showScreen('select')">
+   CHANGE CHARACTER
+  </button>
+ </div>
+</section>
 
-    <input
-      id="roomCode"
-      type="text"
-      maxlength="6"
-      placeholder="กรอกรหัสห้องแข่งขัน"
-    >
-
-    <button class="secondary" onclick="joinRoom()">
-      🎮 เข้าร่วมการแข่งขัน
-    </button>
-
-  </section>
-
-  <div class="info">
-    <span>🌡️ TEMPERATURE LAB</span>
-    <span>🏆 LIVE CHALLENGE</span>
-    <span>🔬 SCIENCE WORLD</span>
-  </div>
-
-  <div class="footer">
-    THERMOMETER LAB V2 © 2026
-    <br>LEARN • EXPLORE • DISCOVER
-  </div>
-
+<div class="subtitle">LEARN • EXPLORE • DISCOVER</div>
 </main>
 
 <script>
-function createRoom() {
-  const name = document.getElementById("playerName").value.trim();
+let selected=0;
 
-  if (!name) {
-    alert("กรุณาใส่ชื่อครูก่อน");
-    return;
-  }
+const avatars=['👩🏻‍🔬','👨🏽‍🔬','🧑🏼‍🔬','👩🏽‍🚀'];
 
-  alert("สวัสดี " + name +
-    "!\nระบบสร้างห้องแข่งขันจะเปิดใช้งานในขั้นตอนถัดไป");
+function showScreen(id){
+ document.querySelectorAll('.screen').forEach(s=>{
+  s.classList.remove('active');
+ });
+ document.getElementById(id).classList.add('active');
 }
 
-function joinRoom() {
-  const name = document.getElementById("playerName").value.trim();
-  const code = document.getElementById("roomCode").value.trim();
+function choose(index){
+ selected=index;
+ document.querySelectorAll('.character').forEach((c,i)=>{
+  c.classList.toggle('selected',i===index);
+ });
+}
 
-  if (!name) {
-    alert("กรุณาใส่ชื่อผู้เล่นก่อน");
-    return;
-  }
+function confirmCharacter(){
+ const name=document.getElementById('playerName').value.trim();
 
-  if (!code) {
-    alert("กรุณากรอกรหัสห้อง");
-    return;
-  }
+ if(!name){
+  alert('กรุณาใส่ชื่อผู้เล่นก่อน');
+  return;
+ }
 
-  alert("ยินดีต้อนรับ " + name +
-    "\nรหัสห้อง: " + code +
-    "\nระบบเข้าห้องออนไลน์จะเปิดใช้งานในขั้นตอนถัดไป");
+ document.getElementById('chosenAvatar').textContent=avatars[selected];
+ document.getElementById('welcomeName').textContent=name;
+ showScreen('lobby');
 }
 </script>
-
 </body>
 </html>
